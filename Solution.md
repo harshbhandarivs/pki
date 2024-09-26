@@ -52,6 +52,20 @@ CN="jedi_server.local" openssl req -config openssl.cnf -section leaf_req -new -k
 openssl ca -config openssl.cnf -section jedi_server_ca -in jedi_server_csr.pem -out jedi_server_cert.pem
 ```
 
+### Creating ceriticate bundles
+```
+cat yavin_cert.pem rebel_ca_cert.pem gca_cert.pem > yavin_bundle.pem
+cat jedi_server_cert.pem jedi_ca_cert.pem gca_cert.pem > jedi_bundle.pem
+```
+
+### Moving certificates and key to communication directory
+```
+cp jedi_bundle.pem communication/jedi_bundle.pem
+cp yavin_bundle.pem communication/yavin_bundle.pem
+cp jedi_server_pkey.pem communication/jedi_server_pkey.pem
+cp gca_cert.pem communication/gca_cert.pem
+```
+
 ### Rebel OCSP Responder
 ```bash
 openssl genpkey -paramfile ec_param.pem -out rebel_ocsp.pem
@@ -61,10 +75,15 @@ openssl ca -config openssl.cnf -section rebel_ca -in rebel_ocsp_csr.pem -out reb
 
 ### Running OCSP Server
 ```bash
-openssl ocsp -port 8888 -index ./rebel_index.txt -CA rebel_ca_cert.pem -rkey rebel_ocsp.pem -rsigner rebel_ocsp_csr.pem 
+openssl ocsp -port 8888 -index ./rebel_index.txt -CA rebel_ca_cert.pem -rkey rebel_ocsp.pem -rsigner rebel_ocsp_cert.pem
 ```
 
-### Running OCSP Client to verify
+### Running OCSP Client to get certificate status
 ```bash
-openssl ocsp -issuer rebel_ca_cert.pem  -cert yavin_cert.pem -url http://ocsp.local:8888 -resp_text
+openssl ocsp -issuer rebel_ca_cert.pem  -cert yavin_cert.pem -url http://ocsp.local:8888 -resp_text -CAfile gca_cert.pem
+```
+
+### Revoking Certificate of Rebel Server
+```bash
+openssl ca -config openssl.cnf -section -revoke yavin_cert.pem
 ```
