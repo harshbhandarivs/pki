@@ -1,6 +1,9 @@
 ### Solution
 There is always a neutral party which generates certificates for all which is the root CA. Let's generate that first. We will use eliptic curve as algorithm to generate private keys for all entities.
 
+### Entities
+![Entities](./uploads/entitites.png)
+
 ### Generating parameter file for private key generation
 ```bash
 openssl genpkey -genparam -algorithm ec -pkeyopt ec_paramgen_curve:secp521r1 -out ec_param.pem
