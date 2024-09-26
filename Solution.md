@@ -87,3 +87,8 @@ openssl ocsp -issuer rebel_ca_cert.pem  -cert yavin_cert.pem -url http://ocsp.lo
 ```bash
 openssl ca -config openssl.cnf -section -revoke yavin_cert.pem
 ```
+
+### Creating Self Signed Ceritficate using single command
+```bash
+openssl req -x509 -newkey rsa:2048 -noenc -keyout self_sign_pkey.pem -out self_sign_cert.pem -subj "/CN=fake.local"
+```
