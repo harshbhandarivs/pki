@@ -1,0 +1,99 @@
+CN = ""
+
+[ root_req ]
+prompt = no
+distinguished_name = ca_distinguished_name
+req_extensions = root_x509_extensions
+
+[ ca_distinguished_name ]
+CN= "Galactic Certificate Authority"
+
+[ root_x509_extensions ]
+keyUsage = critical, keyCertSign, cRLSign
+basicConstraints = critical, CA:true, pathlen:1
+subjectKeyIdentifier = hash
+
+[ root_ca ]
+private_key = gca_pkey.pem
+certificate = gca_cert.pem
+new_certs_dir = gca_issued
+default_md = default
+database = root_index.txt
+policy = policy_cert
+copy_extensions = copy
+default_days = 30
+rand_serial = yes
+
+[ policy_cert ]
+commonName = supplied
+
+[ jedi_ca_req ]
+prompt = no
+distinguished_name = jedi_ca_distinguished_name
+req_extensions = intermediate_x509_extensions
+
+[ jedi_ca_distinguished_name ]
+CN = "Jedi Certificate Authority"
+
+[ rebel_ca_req ]
+prompt = no
+distinguished_name = rebel_ca_distinguished_name
+req_extensions = intermediate_x509_extensions
+
+[ rebel_ca_distinguished_name ]
+CN = "Rebel Certificate Authority"
+
+[ intermediate_x509_extensions ]
+keyUsage = critical, keyCertSign, cRLSign
+basicConstraints = critical, CA:true, pathlen:0
+subjectKeyIdentifier = hash
+
+[ jedi_ca ]
+private_key = jedi_ca_pkey.pem
+certificate = jedi_ca_cert.pem
+new_certs_dir = jedi_ca_issued
+default_md = default
+database = jedi_index.txt
+policy = policy_cert
+copy_extensions = copy
+default_days = 30
+rand_serial = yes
+
+[ rebel_ca ]
+private_key = rebel_ca_pkey.pem
+certificate = rebel_ca_cert.pem
+new_certs_dir = rebel_ca_issued
+default_md = default
+database = rebel_index.txt
+policy = policy_cert
+copy_extensions = copy
+default_days = 30
+rand_serial = yes
+
+[ leaf_req ]
+prompt = no
+distinguished_name = leaf_distinguised_name
+req_extensions = leaf_x509_extensions
+
+[ leaf_distinguised_name ]
+CN = $ENV::CN
+
+[ leaf_x509_extensions ]
+keyUsage = critical, digitalSignature
+basicConstraints = critical, CA:false
+subjectKeyIdentifier = hash
+authorityInfoAccess = OCSP;URI:http://ocsp.local:8888
+
+[ rebel_ocsp_req ]
+prompt = no
+distinguished_name = rebel_ocsp_distinguished_name
+req_extensions = rebel_ocsp_req_extensions
+
+[ rebel_ocsp_distinguished_name ]
+CN = "ocsp.local"
+
+[ rebel_ocsp_req_extensions ]
+keyUsage = critical, digitalSignature
+extendedKeyUsage = critical, OCSPSigning
+basicConstraints = critical, CA:false
+subjectKeyIdentifier = hash
